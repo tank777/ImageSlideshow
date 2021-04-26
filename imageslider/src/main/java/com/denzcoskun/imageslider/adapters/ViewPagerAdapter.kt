@@ -52,17 +52,6 @@ class ViewPagerAdapter(context: Context?,
         val itemView = layoutInflater!!.inflate(R.layout.pager_row, container, false)
 
         val imageView = itemView.findViewById<ImageView>(R.id.image_view)
-        val linearLayout = itemView.findViewById<LinearLayout>(R.id.linear_layout)
-        val textView = itemView.findViewById<TextView>(R.id.text_view)
-
-        if (imageList!![position].title != null){
-            textView.text = imageList!![position].title
-            linearLayout.setBackgroundResource(titleBackground)
-            textView.gravity = getGravityFromAlign(textAlign)
-            linearLayout.gravity = getGravityFromAlign(textAlign)
-        }else{
-            linearLayout.visibility = View.INVISIBLE
-        }
 
         // Image from url or local path check.
         val loader = if (imageList!![position].imageUrl == null){
