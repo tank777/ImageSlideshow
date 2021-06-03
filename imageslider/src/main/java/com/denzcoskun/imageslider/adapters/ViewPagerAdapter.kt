@@ -1,16 +1,15 @@
 package com.denzcoskun.imageslider.adapters
 
 import android.content.Context
-import android.view.*
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.viewpager.widget.PagerAdapter
 import com.denzcoskun.imageslider.R
-import com.denzcoskun.imageslider.constants.ActionTypes
-import com.denzcoskun.imageslider.constants.ScaleTypes
-import com.denzcoskun.imageslider.interfaces.ItemChangeListener
 import com.denzcoskun.imageslider.interfaces.ItemClickListener
 import com.denzcoskun.imageslider.interfaces.TouchListener
 import com.denzcoskun.imageslider.models.SlideModel
@@ -22,20 +21,17 @@ import com.squareup.picasso.Picasso
  * denzcoskun@hotmail.com
  * İstanbul
  */
-class ViewPagerAdapter(context: Context?,
-                       imageList: List<SlideModel>,
-                       private var radius: Int,
-                       private var errorImage: Int,
-                       private var placeholder: Int,
-                       private var titleBackground: Int,
-                       private var scaleType: ScaleTypes?,
-                       private var textAlign: String) : PagerAdapter() {
-
-    constructor(context: Context, imageList: List<SlideModel>, radius: Int, errorImage: Int, placeholder: Int, titleBackground: Int, textAlign: String) :
-            this(context, imageList, radius, errorImage, placeholder, titleBackground, null, textAlign)
+class ViewPagerAdapter(
+    context: Context?,
+    imageList: List<SlideModel>,
+    private var radius: Int,
+    private var errorImage: Int,
+    private var placeholder: Int
+) : PagerAdapter() {
 
     private var imageList: List<SlideModel>? = imageList
-    private var layoutInflater: LayoutInflater? = context!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater?
+    private var layoutInflater: LayoutInflater? =
+        context!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater?
 
     private var itemClickListener: ItemClickListener? = null
     private var touchListener: TouchListener? = null
@@ -48,25 +44,17 @@ class ViewPagerAdapter(context: Context?,
         return imageList!!.size
     }
 
-    override fun instantiateItem(container: ViewGroup, position: Int): View{
+    override fun instantiateItem(container: ViewGroup, position: Int): View {
         val itemView = layoutInflater!!.inflate(R.layout.pager_row, container, false)
 
         val imageView = itemView.findViewById<ImageView>(R.id.image_view)
+        val textView = itemView.findViewById<TextView>(R.id.text_view)
 
         // Image from url or local path check.
-        val loader = if (imageList!![position].imageUrl == null){
+        val loader = if (imageList!![position].imageUrl == null) {
             Picasso.get().load(imageList!![position].imagePath!!)
-        }else{
+        } else {
             Picasso.get().load(imageList!![position].imageUrl!!)
-        }
-
-        // set Picasso options.
-        if ((scaleType != null && scaleType == ScaleTypes.CENTER_CROP) || imageList!![position].scaleType == ScaleTypes.CENTER_CROP){
-            loader.fit().centerCrop()
-        } else if((scaleType != null && scaleType == ScaleTypes.CENTER_INSIDE) || imageList!![position].scaleType == ScaleTypes.CENTER_INSIDE){
-            loader.fit().centerInside()
-        }else if((scaleType != null && scaleType == ScaleTypes.FIT) || imageList!![position].scaleType == ScaleTypes.FIT){
-            loader.fit()
         }
 
         loader.transform(RoundedTransformation(radius, 0))
@@ -76,20 +64,8 @@ class ViewPagerAdapter(context: Context?,
 
         container.addView(itemView)
 
-        imageView.setOnClickListener{itemClickListener?.onItemSelected(position)}
-
-        if (touchListener != null){
-            imageView!!.setOnTouchListener { v, event ->
-                when (event.action) {
-                    MotionEvent.ACTION_MOVE -> touchListener!!.onTouched(ActionTypes.MOVE)
-                    MotionEvent.ACTION_DOWN -> touchListener!!.onTouched(ActionTypes.DOWN)
-                    MotionEvent.ACTION_UP -> touchListener!!.onTouched(ActionTypes.UP)
-                }
-                false
-            }
-        }
-
-
+        imageView.setOnClickListener { itemClickListener?.onItemSelected(position) }
+        textView.text = imageList!![position].title
         return itemView
     }
 

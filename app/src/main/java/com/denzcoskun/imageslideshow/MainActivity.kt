@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         imageList.add(SlideModel("https://bit.ly/2BteuF2", "Elephants and tigers may become extinct."))
         imageList.add(SlideModel("https://bit.ly/3fLJf72", "The population of elephants is decreasing in the world."))
 
-        imageSlider.setImageList(imageList, ScaleTypes.CENTER_CROP)
+        imageSlider.setImageList(imageList)
 
         imageSlider.setItemClickListener(object : ItemClickListener {
             override fun onItemSelected(position: Int) {
